@@ -1,4 +1,4 @@
-import React, { useState, useRef  } from "react";
+import React, { useState, useRef, ChangeEvent  } from "react";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toJpeg, toPng } from 'html-to-image';
 
@@ -17,26 +17,39 @@ const labelStyle : React.CSSProperties = {
   display: "block",
 };
 
-const EmailGenarator = () => {
-  const [name, setName] = useState("");
-  const [title, setTitle] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [company, setCompany] = useState("");
-  const [website, setWebsite] = useState("");
-  const [copied, setCopied] = useState(false);
-  const previewRef = useRef(null);
+const EmailGenarator : React.FC  = () => {
+    const [name, setName] = useState<string>('');
+    const [title, setTitle] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [phone, setPhone] = useState<string>('');
+    const [company, setCompany] = useState<string>('');
+    const [website, setWebsite] = useState<string>('');
+    const [logo, setLogo] = useState<string | null>(null);
+    const [copied, setCopied] = useState<boolean>(false);
+    const previewRef = useRef<HTMLDivElement | null>(null);
 
-  const signatureHtml = `
-  <div>
-    <p><strong>${name}</strong></p>
-    <p>${title}</p>
-    <p>Email: <a href="mailto:${email}">${email}</a></p>
-    <p>Phone: ${phone}</p>
-    <p>Company: ${company}</p>
-    <p>Website: <a href="${website}" target="_blank" rel="noopener noreferrer">${website}</a></p>
-  </div>
-`;
+    const signatureHtml = `
+    <div>
+      ${logo ? `<img src="${logo}" alt="Company Logo" style="max-width: 100px;" />` : ''}
+      <p><strong>${name}</strong></p>
+      <p>${title}</p>
+      <p>Email: <a href="mailto:${email}">${email}</a></p>
+      <p>Phone: ${phone}</p>
+      <p>Company: ${company}</p>
+      <p>Website: <a href="${website}" target="_blank" rel="noopener noreferrer">${website}</a></p>
+    </div>
+  `;
+
+const handleLogoUpload = (event : ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setLogo(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+  };
 
   const handleExportAsImage = () => {
     if (previewRef.current) {
@@ -123,10 +136,18 @@ const EmailGenarator = () => {
             />
           </div>
         </div>
+
+        <div>
+        <div>
+          <label style={labelStyle}>Company Logo: </label>
+          <input type="file" accept="image/*" onChange={handleLogoUpload} />
+        </div>
+        </div>
       </form>
 
       <h2>Preview:</h2>
       <div ref={previewRef} style={{ border: '1px solid #ccc', padding: '10px', marginTop: '20px', background: "#fff" }}>
+        {logo && <img src={logo} alt="Company Logo" style={{ maxWidth: '100px' }} />}
         <p><strong>{name}</strong></p>
         <p>{title}</p>
         <p>Email: <a href={`mailto:${email}`}>{email}</a></p>
