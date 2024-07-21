@@ -150,10 +150,10 @@ const handleLogoUpload = (event : ChangeEvent<HTMLInputElement>) => {
         {logo && <img src={logo} alt="Company Logo" style={{ maxWidth: '100px' }} />}
         <p><strong>{name}</strong></p>
         <p>{title}</p>
-        <p>Email: <a href={`mailto:${email}`}>{email}</a></p>
-        <p>Phone: {phone}</p>
-        <p>Company: {company}</p>
-        <p>Website: <a href={website} target="_blank" rel="noopener noreferrer">{website}</a></p>
+        {email &&<p>Email: <a href={`mailto:${email}`}>{email}</a></p>}
+        {phone && <p>Phone: {phone}</p>}
+        {company && <p>Company: {company}</p>}
+        {website && <p>Website: <a href={website} target="_blank" rel="noopener noreferrer">{website}</a></p>}
       </div>
 
       <CopyToClipboard text={signatureHtml} onCopy={() => setCopied(true)}>
